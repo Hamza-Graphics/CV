@@ -460,33 +460,37 @@
                 
                 <div class="mt-10">
                     <h3 class="text-xl font-bold mb-4 text-center">تواصل معي</h3>
-                    <form id="contactForm" class="space-y-4">
+                    <form id="contactForm" action="https://formspree.io/f/xldwwpgb" method="POST" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="name" class="block mb-2 text-sm font-medium">الاسم</label>
-                                <input type="text" id="name" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="أدخل اسمك" required>
+                                <input type="text" id="name" name="name" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="أدخل اسمك" required>
                             </div>
                             <div>
                                 <label for="email" class="block mb-2 text-sm font-medium">البريد الإلكتروني</label>
-                                <input type="email" id="email" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="أدخل بريدك الإلكتروني" required>
+                                <input type="email" id="email" name="email" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="أدخل بريدك الإلكتروني" required>
                             </div>
                         </div>
                         <div>
                             <label for="subject" class="block mb-2 text-sm font-medium">الموضوع</label>
-                            <input type="text" id="subject" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="أدخل عنوان الرسالة" required>
+                            <input type="text" id="subject" name="subject" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="أدخل عنوان الرسالة" required>
                         </div>
                         <div>
                             <label for="message" class="block mb-2 text-sm font-medium">الرسالة</label>
-                            <textarea id="message" rows="4" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="اكتب رسالتك هنا..." required></textarea>
+                            <textarea id="message" name="message" rows="4" class="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-base" placeholder="اكتب رسالتك هنا..." required></textarea>
                         </div>
                         <div class="text-center">
                             <button type="submit" id="sendButton" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors">
-                                <i class="fas fa-paper-plane ml-2"></i>إرسال الرسالة
+                                <span id="buttonText"><i class="fas fa-paper-plane ml-2"></i>إرسال الرسالة</span>
+                                <span id="loadingSpinner" class="hidden"><i class="fas fa-spinner fa-spin ml-2"></i>جاري الإرسال...</span>
                             </button>
                         </div>
                     </form>
                     <div id="formSuccess" class="hidden mt-4 p-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg text-center">
-                        تم إرسال رسالتك بنجاح! سأتواصل معك في أقرب وقت ممكن.
+                        <i class="fas fa-check-circle ml-2"></i> تم إرسال رسالتك بنجاح! سأتواصل معك في أقرب وقت ممكن.
+                    </div>
+                    <div id="formError" class="hidden mt-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg text-center">
+                        <i class="fas fa-exclamation-circle ml-2"></i> حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.
                     </div>
                 </div>
             </div>
@@ -607,28 +611,50 @@
             animateProgressBars();
         });
         
-        // Contact form handling
+        // Contact form handling with Formspree
         const contactForm = document.getElementById('contactForm');
         const formSuccess = document.getElementById('formSuccess');
+        const formError = document.getElementById('formError');
+        const sendButton = document.getElementById('sendButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
         
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
+            // Show loading state
+            buttonText.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            sendButton.disabled = true;
+            formSuccess.classList.add('hidden');
+            formError.classList.add('hidden');
             
-            // In a real application, you would send this data to a server
-            // Here we'll just show a success message
-            formSuccess.classList.remove('hidden');
-            contactForm.reset();
-            
-            // Hide success message after 5 seconds
-            setTimeout(() => {
-                formSuccess.classList.add('hidden');
-            }, 5000);
+            try {
+                const formData = new FormData(contactForm);
+                
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    formSuccess.classList.remove('hidden');
+                    contactForm.reset();
+                } else {
+                    throw new Error('فشل في إرسال الرسالة');
+                }
+            } catch (error) {
+                formError.classList.remove('hidden');
+                console.error('Error:', error);
+            } finally {
+                // Reset button state
+                buttonText.classList.remove('hidden');
+                loadingSpinner.classList.add('hidden');
+                sendButton.disabled = false;
+            }
         });
         
         // Download CV functionality
@@ -652,4 +678,4 @@
         });
     </script>
 </body>
-</html>
+                                                                                                                               </html>
