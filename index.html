@@ -218,7 +218,9 @@
                             <img src="https://medqz.github.io/files/حمزة.png" alt="Hamza Alhuraibi" class="w-full h-full object-cover relative z-10">
                         </div>
                         <div class="text-center md:text-left">
-                            <h2 class="text-3xl md:text-4xl font-bold mb-2 text-primary dark:text-primary-light">Hamza Abdulfattah Abdullah Saeed Alhuraibi</h2>
+                            <h2 class="text-3xl md:text-4xl font-bold mb-2 text-primary dark:text-primary-light">
+  <span data-translate="full_name">Hamza Abdulfattah Abdullah Saeed Alhuraibi</span>
+</h2>
                             <h3 class="text-xl md:text-2xl font-semibold text-gray-600 dark:text-gray-300 mb-4" data-translate="job_title">Graphic Designer and Video Editor</h3>
                             <div class="inline-block bg-primary text-white dark:bg-primary-dark py-1 px-4 rounded-full text-sm" data-translate="ready_to_work">Ready to work ✨</div>
                         </div>
@@ -616,6 +618,7 @@
         // Language translation system
         const translations = {
             en: {
+                full_name:"Hamza Abdulfattah Abdullah Saeed Alhuraibi",
                 resume: "CV",
                 personal_info: "Personal Information",
                 experience: "Work Experience",
@@ -669,7 +672,9 @@
                 close: "Close"
             },
             ar: {
-                resume: "السيرة الذاتية",
+              full_name:"حمزة عبدالفتاح عبدالله سعيد الحريبي"
+                ,
+               resume: "السيرة الذاتية",
                 personal_info: "المعلومات الشخصية",
                 experience: "الخبرات العملية",
                 skills: "المهارات",
@@ -782,7 +787,8 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const lang = this.getAttribute('data-lang');
-                    changeLanguage(lang);
+                   changeLanguage(lang);
+                  //  document.querySelector//('.language-dropdown'//).style.display = //'none';
                 });
             });
         });
@@ -935,4 +941,4 @@
         });
     </script>
 </body>
-    </html>
+                                                                                           </html>
